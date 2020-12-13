@@ -48,7 +48,10 @@ class Trainer():
         for i in range(start, len(self.test_seq)):
             self.win.addstr(self.test_seq[i], curses.color_pair(103))
 
-        if (len(self.inp) == len(self.test_seq)-1):
+        if self.test_seq[len(self.inp)] == ' ':
+            self.inp += ' '
+
+        if (len(self.inp) == len(self.test_seq)):
             self.generate_test_seq()
             self.set_output(t.test_seq)
 
