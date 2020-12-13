@@ -1,6 +1,10 @@
+import random
 import argparse
 import curses
 import os
+
+def split(word):
+        return [char for char in word]
 
 class Trainer():
     def __init__(self, win):
@@ -8,10 +12,46 @@ class Trainer():
         self.win.nodelay(True)
         self.win.clear()
 
-    def get_colemak_dmk_layout(self):
+    def set_colemak_dmk_layout(self):
+        ret = []
+        ret.append(split('1234567890'))
+        ret.append(split('qwfpbjluy;'))
+        ret.append(split('arstgmneio'))
+        ret.append(split('zxcdvkh,./'))
+        self.layout = ret
 
     def handle_input(self, key):
-        self.set_output(str(key))
+        if len(self.inp) == 0:
+            if self.test_seq[0] == key:
+                char_ok = True
+            else:
+                char_ok = False
+        elif self.test_seq[len(self.inp)] == key:
+            char_ok = True
+        else:
+            char_ok = False
+
+        if char_ok:
+            self.inp += key
+
+        self.win.erase()
+
+        for i in range(0, len(self.inp)):
+            self.win.addstr(self.test_seq[i], curses.color_pair(71))
+
+        if not char_ok:
+            self.win.addstr(self.test_seq[len(self.inp)], curses.color_pair(197))
+            start = len(self.inp)+1
+        else:
+            start = len(self.inp)
+
+        for i in range(start, len(self.test_seq)):
+            self.win.addstr(self.test_seq[i], curses.color_pair(103))
+
+        if (len(self.inp) == len(self.test_seq)-1):
+            self.generate_test_seq()
+            self.set_output(t.test_seq)
+
 
     def set_output(self, out_str):
         self.win.clear()
@@ -26,6 +66,23 @@ class Trainer():
                # No input
                pass
 
+    def generate_test_seq(self):
+        num_words = 8
+
+        letters_to_test = self.layout[2][0:4]
+        letters_to_test.extend(self.layout[2][6:])
+
+        test_str = ''
+        for i in range(0, num_words):
+            wordlen = random.randint(2, 4)
+            for j in range(0, wordlen):
+                test_str += (letters_to_test[random.randint(0, len(letters_to_test)-1)])
+            test_str += ' '
+
+        self.test_seq = test_str
+        self.inp = ''
+
+
 def main(win):
 
     curses.start_color()
@@ -38,6 +95,13 @@ def main(win):
     args = parser.parse_args()
 
     t = Trainer(win)
+    t.set_colemak_dmk_layout()
+    t.generate_test_seq()
+    t.set_output(t.test_seq)
+    """
+    for i in range(0, 255):
+        win.addstr(str(i) + ' ', curses.color_pair(i))
+    """
     t.run()
 
 curses.wrapper(main)
