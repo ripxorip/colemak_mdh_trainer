@@ -36,6 +36,16 @@ class Trainer():
 
         self.win.erase()
 
+        self.win.addstr('[ ', curses.color_pair(103))
+        for i in range(0, 4):
+            self.win.addstr(self.letters_to_test[i], curses.color_pair(103))
+
+        self.win.addstr('   ', curses.color_pair(103))
+
+        for i in range(4, 8):
+            self.win.addstr(self.letters_to_test[i], curses.color_pair(103))
+        self.win.addstr(' ]\n', curses.color_pair(103))
+
         for i in range(0, len(self.inp)):
             self.win.addstr(self.test_seq[i], curses.color_pair(71))
 
@@ -55,9 +65,18 @@ class Trainer():
             self.generate_test_seq()
             self.set_output(t.test_seq)
 
-
     def set_output(self, out_str):
         self.win.clear()
+        self.win.addstr('[ ', curses.color_pair(103))
+        for i in range(0, 4):
+            self.win.addstr(self.letters_to_test[i], curses.color_pair(103))
+
+        self.win.addstr('   ', curses.color_pair(103))
+
+        for i in range(4, 8):
+            self.win.addstr(self.letters_to_test[i], curses.color_pair(103))
+        self.win.addstr(' ]\n', curses.color_pair(103))
+
         self.win.addstr(out_str)
 
     def run(self):
@@ -74,6 +93,8 @@ class Trainer():
 
         letters_to_test = self.layout[2][0:4]
         letters_to_test.extend(self.layout[2][6:])
+
+        self.letters_to_test = letters_to_test
 
         test_str = ''
         for i in range(0, num_words):
